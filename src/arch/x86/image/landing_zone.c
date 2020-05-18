@@ -7,6 +7,7 @@ FILE_LICENCE ( GPL2_OR_LATER_OR_UBDL );
 #include <string.h>
 #include <errno.h>
 #include <ipxe/segment.h>
+#include <ipxe/cpuid.h>
 #include <landing_zone.h>
 
 struct sl_header {
@@ -135,6 +136,20 @@ static int lz_probe ( struct image *image ) {
 	int rc;
 	struct sl_header sl_hdr;
 	struct lz_header hdr;
+	uint32_t eax, ebx, ecx, edx;
+
+	cpuid ( CPUID_AMD_CHECK, 0, &eax, &ebx, &ecx, &edx );
+	if ( eax < CPUID_AMD_FEATURES || ebx != 0x68747541 ||
+	     ecx != 0x444D4163 || edx != 0x69746E65 ) {
+		DBGC ( image, "Not an AMD processor\n" );
+		return -ENOEXEC;
+	}
+
+	cpuid ( CPUID_AMD_FEATURES, 0, &eax, &ebx, &ecx, &edx );
+	if ( !( ecx & ( 1 << 12 ) ) ) {
+		DBGC ( image, "Processor doesn't support SKINIT instruction\n" );
+		return -ENOEXEC;
+	}
 
 	if ( image->len > SLB_SIZE ) {
 		DBGC ( image, "LZ %p too big for Landing Zone\n",
