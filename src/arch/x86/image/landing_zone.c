@@ -65,6 +65,7 @@ int lz_set_bzimage ( struct image *image, userptr_t zeropage, userptr_t tgt ) {
  * @ret rc		Return status code
  */
 static int lz_exec ( struct image *image ) {
+	uint64_t tsc;
 	if ( ! target ) {
 		DBGC ( image, "LZ %p: no target address (unsupported kernel type?)\n",
 		       image );
@@ -74,6 +75,28 @@ static int lz_exec ( struct image *image ) {
 	/* TODO: remove hardcoded values */
 	/* Set APs in wait-for-SIPI state */
 	*((volatile uint32_t *)phys_to_user( 0xfee00300ULL )) = 0x000c0500;
+
+	/*
+	 * AMD APM states that:
+	 * "(...) a fixed delay of no more than 1000 processor cycles may be
+	 * necessary before executing SKINIT to ensure reliable sensing of
+	 * APIC INIT state by the SKINIT."
+	 *
+	 * If this value is too low, initial PCR17 values will have the value
+	 * as if zero-lenght block of data was measured:
+	 * 31A2DC4C22F9C5444A41625D05F95898E055F750  SHA1
+	 * 1C9ECEC90E28D2461650418635878A5C91E49F47586ECF75F2B0CBB94E897112  SHA256
+	 *
+	 * Tests show that 1000 is not enough, even when lowest-performance
+	 * P-state is assumed. 2^16 seems to be the lowest power of 2 which
+	 * works.
+	 */
+	asm volatile ( "rdtsc\n\t"
+	               "add $0x00010000, %%eax\n\t"
+	               "adc $0, %%edx\n\t"
+	               "mov %%eax, (%0)\n\t"
+	               "mov %%edx, 4(%0)\n\t"
+	               :: "r" ( &tsc) : "eax", "edx", "memory");
 
 	/* Relinquish all TPM localities */
 	*((volatile uint8_t *)phys_to_user(0xFED40000ULL)) = 0x20;
@@ -85,8 +108,14 @@ static int lz_exec ( struct image *image ) {
 	DBGC ( image, "LZ %p performing SKINIT with eax=0x%lx now\n.\n.\n.", image,
 	       target );
 
-	__asm__ __volatile__ ( "skinit"
-			       : : "a" ( target ) : "memory" );
+	asm volatile ( "1: rdtsc\n\t"
+	               "cmp %%edx, 4(%%ecx)\n\t"
+	               "ja 1b\n\t"
+	               "cmp %%eax, (%%ecx)\n\t"
+	               "ja 1b\n\t"
+	               "mov %%ebx, %%eax\n\t"
+	               "skinit"
+	               :: "c" ( &tsc ), "b" ( target ) : "memory" );
 
 	/* There is no way for the image to return, since we provide
 	 * no return address.
