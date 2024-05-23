@@ -765,11 +765,14 @@ static struct net_device_operations igbvf_operations = {
 void igbvf_get_hw_control ( struct igbvf_adapter *adapter )
 {
 	struct e1000_hw *hw = &adapter->hw;
-	u32 ctrl_ext;
+	u32 ctrl_ext, extcnf_ctrl;
 
 	/* Let firmware know the driver has taken over */
 	ctrl_ext = er32 ( CTRL_EXT );
 	ew32 ( CTRL_EXT, ctrl_ext | E1000_CTRL_EXT_DRV_LOAD );
+
+	extcnf_ctrl = er32 ( EXTCNF_CTRL );
+	ew32 ( EXTCNF_CTRL, extcnf_ctrl | 0x20 );
 }
 
 /**
