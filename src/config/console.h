@@ -59,7 +59,7 @@ FILE_LICENCE ( GPL2_OR_LATER_OR_UBDL );
  *
  * Note that this is not related in any way to CONSOLE_SYSLOG.
  */
-#define	LOG_LEVEL	LOG_NONE
+#define	LOG_LEVEL	LOG_ALL
 
 #include <config/named.h>
 #include NAMED_CONFIG(console.h)
