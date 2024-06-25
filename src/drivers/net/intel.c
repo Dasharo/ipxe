@@ -1016,6 +1016,9 @@ static struct net_device_operations intel_operations = {
 #define E1000_RADV	0x0282C	/* Rx Interrupt Absolute Delay Timer - RW */
 
 #define E1000_H2ME		0x05B50	/* Host to ME */
+#define E1000_SWSM	0x05B50	/* SW Semaphore */
+#define E1000_FWSM	0x05B54	/* FW Semaphore */
+#define E1000_EXFWSM	0x05B58	/* Extended FW Semaphore */
 
 static void intel_regdump(struct intel_nic *intel) {
 	REGDUMP( INTEL_CTRL );
@@ -1048,6 +1051,9 @@ static void intel_regdump(struct intel_nic *intel) {
 	REGDUMP( E1000_FEXTNVM12 )
 	REGDUMP( E1000_DPGFR )
 	REGDUMP( E1000_H2ME )
+	REGDUMP( E1000_SWSM )
+	REGDUMP( E1000_FWSM )
+	REGDUMP( E1000_EXFWSM )
 }
 
 /**
