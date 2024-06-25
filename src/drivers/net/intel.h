@@ -332,7 +332,7 @@ enum intel_flags {
 };
 
 /** The i219 has a seriously broken reset mechanism */
-#define INTEL_I219 ( INTEL_NO_PHY_RST | INTEL_RST_HANG )
+#define INTEL_I219 ( INTEL_RST_HANG )
 
 /**
  * Dump diagnostic information
