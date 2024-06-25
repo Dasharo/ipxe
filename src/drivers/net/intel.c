@@ -668,7 +668,7 @@ static int intel_open ( struct net_device *netdev ) {
 
 	/* Let firmware know the driver has taken over */
 	extcnf_ctrl = readl ( intel->regs + 0xf00 );
-	extcnf_ctrl |= (1 << 5);
+	extcnf_ctrl |= (1 << 5) | (1 << 7);
 	writel ( extcnf_ctrl, intel->regs + 0xf00 );
 
 	/* Create transmit descriptor ring */
