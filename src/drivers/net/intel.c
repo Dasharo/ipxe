@@ -1054,6 +1054,8 @@ static void intel_regdump(struct intel_nic *intel) {
 	REGDUMP( E1000_SWSM )
 	REGDUMP( E1000_FWSM )
 	REGDUMP( E1000_EXFWSM )
+	REGDUMP( E1000_EXTCNF_CTRL )
+	REGDUMP( E1000_EXTCNF_SIZE )
 }
 
 /**
