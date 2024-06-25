@@ -59,7 +59,7 @@ struct console_driver efi_console __attribute__ (( weak ));
 #endif
 #if ! ( defined ( CONSOLE_EFIFB ) && CONSOLE_EXPLICIT ( CONSOLE_EFIFB ) )
 #undef CONSOLE_EFIFB
-#define CONSOLE_EFIFB ( CONSOLE_USAGE_ALL & ~CONSOLE_USAGE_LOG )
+#define CONSOLE_EFIFB ( CONSOLE_USAGE_ALL )
 #endif
 
 /** Number of ASCII glyphs in cache */

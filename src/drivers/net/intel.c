@@ -1047,6 +1047,8 @@ static void intel_regdump(struct intel_nic *intel) {
 	REGDUMP( E1000_SWSM )
 	REGDUMP( E1000_FWSM )
 	REGDUMP( E1000_EXFWSM )
+	REGDUMP( E1000_EXTCNF_CTRL )
+	REGDUMP( E1000_EXTCNF_SIZE )
 }
 
 /**
@@ -1102,6 +1104,8 @@ static int intel_probe ( struct pci_device *pci ) {
 		goto err_fetch_mac;
 
 	intel_regdump(intel);
+
+	mdelay(1000);
 
 	/* Register network device */
 	if ( ( rc = register_netdev ( netdev ) ) != 0 )
