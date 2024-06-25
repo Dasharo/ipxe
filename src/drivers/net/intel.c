@@ -943,6 +943,105 @@ static struct net_device_operations intel_operations = {
  ******************************************************************************
  */
 
+#define REGDUMP(reg) { DBGC(intel, "INTEL REG %s \t= 0x%x\n", "\""#reg"\"", readl( intel->regs + reg)); }
+
+
+#define E1000_CTRL	0x00000	/* Device Control - RW */
+#define E1000_STATUS	0x00008	/* Device Status - RO */
+#define E1000_EECD	0x00010	/* EEPROM/Flash Control - RW */
+#define E1000_EERD	0x00014	/* EEPROM Read - RW */
+#define E1000_CTRL_EXT	0x00018	/* Extended Device Control - RW */
+#define E1000_FLA	0x0001C	/* Flash Access - RW */
+#define E1000_MDIC	0x00020	/* MDI Control - RW */
+#define E1000_SCTL	0x00024	/* SerDes Control - RW */
+#define E1000_FCAL	0x00028	/* Flow Control Address Low - RW */
+#define E1000_FCAH	0x0002C	/* Flow Control Address High -RW */
+#define E1000_FEXT	0x0002C	/* Future Extended - RW */
+#define E1000_FEXTNVM	0x00028	/* Future Extended NVM - RW */
+#define E1000_FEXTNVM3	0x0003C	/* Future Extended NVM 3 - RW */
+#define E1000_FEXTNVM4	0x00024	/* Future Extended NVM 4 - RW */
+#define E1000_FEXTNVM5	0x00014	/* Future Extended NVM 5 - RW */
+#define E1000_FEXTNVM6	0x00010	/* Future Extended NVM 6 - RW */
+#define E1000_FEXTNVM7	0x000E4	/* Future Extended NVM 7 - RW */
+#define E1000_FEXTNVM8	0x5BB0	/* Future Extended NVM 8 - RW */
+#define E1000_FEXTNVM9	0x5BB4	/* Future Extended NVM 9 - RW */
+#define E1000_FEXTNVM11	0x5BBC	/* Future Extended NVM 11 - RW */
+#define E1000_FEXTNVM12	0x5BC0	/* Future Extended NVM 12 - RW */
+#define E1000_PCIEANACFG	0x00F18	/* PCIE Analog Config */
+#define E1000_DPGFR	0x00FAC	/* Dynamic Power Gate Force Control Register */
+#define E1000_FCT	0x00030	/* Flow Control Type - RW */
+#define E1000_VET	0x00038	/* VLAN Ether Type - RW */
+#define E1000_ICR	0x000C0	/* Interrupt Cause Read - R/clr */
+#define E1000_ITR	0x000C4	/* Interrupt Throttling Rate - RW */
+#define E1000_ICS	0x000C8	/* Interrupt Cause Set - WO */
+#define E1000_IMS	0x000D0	/* Interrupt Mask Set - RW */
+#define E1000_IMC	0x000D8	/* Interrupt Mask Clear - WO */
+#define E1000_IAM	0x000E0	/* Interrupt Acknowledge Auto Mask */
+#define E1000_IVAR	0x000E4	/* Interrupt Vector Allocation Register - RW */
+#define E1000_SVCR	0x000F0
+#define E1000_SVT	0x000F4
+#define E1000_LPIC	0x000FC	/* Low Power IDLE control */
+#define E1000_RCTL	0x00100	/* Rx Control - RW */
+#define E1000_FCTTV	0x00170	/* Flow Control Transmit Timer Value - RW */
+#define E1000_TXCW	0x00178	/* Tx Configuration Word - RW */
+#define E1000_RXCW	0x00180	/* Rx Configuration Word - RO */
+#define E1000_PBA_ECC	0x01100	/* PBA ECC Register */
+#define E1000_TCTL	0x00400	/* Tx Control - RW */
+#define E1000_TCTL_EXT	0x00404	/* Extended Tx Control - RW */
+#define E1000_TIPG	0x00410	/* Tx Inter-packet gap -RW */
+#define E1000_AIT	0x00458	/* Adaptive Interframe Spacing Throttle - RW */
+#define E1000_LEDCTL	0x00E00	/* LED Control - RW */
+#define E1000_EXTCNF_CTRL	0x00F00	/* Extended Configuration Control */
+#define E1000_EXTCNF_SIZE	0x00F08	/* Extended Configuration Size */
+#define E1000_PHY_CTRL	0x00F10	/* PHY Control Register in CSR */
+#define E1000_POEMB	E1000_PHY_CTRL	/* PHY OEM Bits */
+#define E1000_PBA	0x01000	/* Packet Buffer Allocation - RW */
+#define E1000_PBS	0x01008	/* Packet Buffer Size */
+#define E1000_PBECCSTS	0x0100C	/* Packet Buffer ECC Status - RW */
+#define E1000_IOSFPC	0x00F28	/* TX corrupted data  */
+#define E1000_EEMNGCTL	0x01010	/* MNG EEprom Control */
+#define E1000_EEWR	0x0102C	/* EEPROM Write Register - RW */
+#define E1000_FLOP	0x0103C	/* FLASH Opcode Register */
+#define E1000_ERT	0x02008	/* Early Rx Threshold - RW */
+#define E1000_FCRTL	0x02160	/* Flow Control Receive Threshold Low - RW */
+#define E1000_FCRTH	0x02168	/* Flow Control Receive Threshold High - RW */
+#define E1000_PSRCTL	0x02170	/* Packet Split Receive Control - RW */
+#define E1000_RDFH	0x02410	/* Rx Data FIFO Head - RW */
+#define E1000_RDFT	0x02418	/* Rx Data FIFO Tail - RW */
+#define E1000_RDFHS	0x02420	/* Rx Data FIFO Head Saved - RW */
+#define E1000_RDFTS	0x02428	/* Rx Data FIFO Tail Saved - RW */
+#define E1000_RDFPC	0x02430	/* Rx Data FIFO Packet Count - RW */
+/* Split and Replication Rx Control - RW */
+#define E1000_RDTR	0x02820	/* Rx Delay Timer - RW */
+#define E1000_RADV	0x0282C	/* Rx Interrupt Absolute Delay Timer - RW */
+
+static void intel_regdump(struct intel_nic *intel) {
+	REGDUMP( INTEL_CTRL );
+	REGDUMP( INTEL_STATUS )
+	REGDUMP( INTEL_EERD )
+	REGDUMP( INTEL_ICR )
+	REGDUMP( INTEL_IMC )
+	REGDUMP( INTEL_RCTL )
+	REGDUMP( INTEL_TCTL )
+	REGDUMP( INTEL_PBA )
+	REGDUMP( INTEL_PBS )
+	REGDUMP( INTEL_RD )
+	REGDUMP( INTEL_RAL0 )
+	REGDUMP( INTEL_RAH0 )
+	REGDUMP( INTEL_FEXTNVM11 )
+	REGDUMP( E1000_FEXTNVM )
+	REGDUMP( E1000_FEXTNVM3 )
+	REGDUMP( E1000_FEXTNVM4 )
+	REGDUMP( E1000_FEXTNVM5 )
+	REGDUMP( E1000_FEXTNVM6 )
+	REGDUMP( E1000_FEXTNVM7 )
+	REGDUMP( E1000_FEXTNVM8 )
+	REGDUMP( E1000_FEXTNVM9 )
+	REGDUMP( E1000_FEXTNVM11 )
+	REGDUMP( E1000_FEXTNVM12 )
+	REGDUMP( E1000_DPGFR )
+}
+
 /**
  * Probe PCI device
  *
@@ -994,6 +1093,8 @@ static int intel_probe ( struct pci_device *pci ) {
 	/* Fetch MAC address */
 	if ( ( rc = intel_fetch_mac ( intel, netdev->hw_addr ) ) != 0 )
 		goto err_fetch_mac;
+
+	intel_regdump(intel);
 
 	/* Register network device */
 	if ( ( rc = register_netdev ( netdev ) ) != 0 )
